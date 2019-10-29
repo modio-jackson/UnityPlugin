@@ -6,6 +6,13 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 
+#if UNITY_2017_2_OR_NEWER
+    using UnityWebRequestAsyncOperation = UnityEngine.Networking.UnityWebRequestAsyncOperation;
+#else
+    using UnityWebRequestAsyncOperation = ModIO.Compatibility.UnityWebRequestAsyncOperation;
+    using DownloadHandlerFile = ModIO.Compatibility.DownloadHandlerFile;
+#endif
+
 namespace ModIO
 {
     public static class DownloadClient

@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
+#if !UNITY_2017_2_OR_NEWER
+using UnityWebRequestAsyncOperation = ModIO.Compatibility.UnityWebRequestAsyncOperation;
+#endif
+
 namespace ModIO.UI
 {
     /// <summary>Manages caching of the textures required by the UI.</summary>

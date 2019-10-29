@@ -9,8 +9,12 @@ using Newtonsoft.Json;
 using Debug = UnityEngine.Debug;
 using WWWForm = UnityEngine.WWWForm;
 using UnityWebRequest = UnityEngine.Networking.UnityWebRequest;
-using UnityWebRequestAsyncOperation = UnityEngine.Networking.UnityWebRequestAsyncOperation;
 
+#if UNITY_2017_2_OR_NEWER
+using UnityWebRequestAsyncOperation = UnityEngine.Networking.UnityWebRequestAsyncOperation;
+#else
+using UnityWebRequestAsyncOperation = ModIO.Compatibility.UnityWebRequestAsyncOperation;
+#endif
 
 namespace ModIO
 {

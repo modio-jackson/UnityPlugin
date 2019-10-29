@@ -3,8 +3,12 @@ using Newtonsoft.Json;
 
 using DateTime = System.DateTime;
 using Debug = UnityEngine.Debug;
-using DownloadHandlerFile = UnityEngine.Networking.DownloadHandlerFile;
 using UnityWebRequest = UnityEngine.Networking.UnityWebRequest;
+#if UNITY_2017_2_OR_NEWER
+using DownloadHandlerFile = UnityEngine.Networking.DownloadHandlerFile;
+#else
+using DownloadHandlerFile = ModIO.Compatibility.DownloadHandlerFile;
+#endif
 
 namespace ModIO
 {
