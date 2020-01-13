@@ -7,7 +7,7 @@ namespace ModIO.UI
 {
     /// <summary>Allows a Toggle component to present as a slide.</summary>
     [RequireComponent(typeof(StateToggle))]
-    public class SlidingToggle : Toggle, UnityEngine.EventSystems.IPointerExitHandler
+    public class SlidingToggle : Toggle
     {
         public enum SlideAxis
         {
@@ -26,11 +26,18 @@ namespace ModIO.UI
         [SerializeField] private bool m_disableAutoToggle = false;
         [SerializeField] private SlideAxis m_slideAxis = SlideAxis.Horizontal;
         [SerializeField] private float m_slideDuration = 0.15f;
-        [Tooltip("Set duration to block clicks for after the slide animation")]
-        [SerializeField] private float m_reactivateDelay = 0.05f;
+        [Tooltip("Duration for which clicks are ignored after animating is completed. A negative value will allow clicking during the slide animation.")]
+        [SerializeField] private float m_reactivateDelay = 0f;
 
         // --- RUNTIME DATA ---
+        /// <summary>Coroutine playing the slide animation.</summary>
         private Coroutine m_animation = null;
+
+        /// <summary>Is this component currently clickable?</summary>
+        private bool IsClickable
+        {
+            get { return (this.m_reactivateDelay < 0f || !this.isAnimating); }
+        }
 
         // --- ACCESSORS ---
         public SlideAxis slideAxis
@@ -206,8 +213,11 @@ namespace ModIO.UI
         /// <summary>Overrides click event.</summary>
         public override void OnPointerClick(PointerEventData eventData)
         {
-            if(eventData.button != PointerEventData.InputButton.Left)
+            if(eventData.button != PointerEventData.InputButton.Left
+               || !this.IsClickable)
+            {
                 return;
+            }
 
             if(this.isOn)
             {
@@ -221,6 +231,26 @@ namespace ModIO.UI
             if(!this.m_disableAutoToggle)
             {
                 base.OnPointerClick(eventData);
+            }
+        }
+
+        /// <summary>Overrides submit event.</summary>
+        public override void OnSubmit(BaseEventData eventData)
+        {
+            if(!this.IsClickable) { return; }
+
+            if(this.isOn)
+            {
+                this.onClickedWhileOn.Invoke();
+            }
+            else
+            {
+                this.onClickedWhileOff.Invoke();
+            }
+
+            if(!this.m_disableAutoToggle)
+            {
+                base.OnSubmit(eventData);
             }
         }
 
