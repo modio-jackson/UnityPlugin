@@ -268,6 +268,5 @@ namespace ModIO.UI
             };
         }
         #endif
-
     }
 }
