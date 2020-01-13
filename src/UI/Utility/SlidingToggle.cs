@@ -253,20 +253,5 @@ namespace ModIO.UI
                 base.OnSubmit(eventData);
             }
         }
-
-        #if UNITY_EDITOR
-        protected override void OnValidate()
-        {
-            base.OnValidate();
-
-            UnityEditor.EditorApplication.delayCall += () =>
-            {
-                if(this != null)
-                {
-                    UpdateContentPosition(false);
-                }
-            };
-        }
-        #endif
     }
 }
