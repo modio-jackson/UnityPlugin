@@ -21,8 +21,7 @@ namespace ModIO.UI
         /// <summary>Event triggered if the toggled is clicked while off.</summary>
         public UnityEvent onClickedWhileOff = new UnityEvent();
 
-        [Header("Slide Settings")]
-        [SerializeField] private RectTransform m_content = null;
+        [SerializeField] private RectTransform m_slideContent = null;
         [Tooltip("When enabled, the isOn value is not toggled via a click/submit action.")]
         [SerializeField] private bool m_disableAutoToggle = false;
         [SerializeField] private SlideAxis m_slideAxis = SlideAxis.Horizontal;
@@ -73,7 +72,7 @@ namespace ModIO.UI
         // ---------[ UI FUNCTIONALITY ]---------
         private void UpdateContentPosition(bool animate)
         {
-            if(this.m_content == null) { return; }
+            if(this.m_slideContent == null) { return; }
 
             Vector2 startPos;
             Vector2 targetPos;
@@ -81,26 +80,26 @@ namespace ModIO.UI
             {
                 if(this.isOn)
                 {
-                    startPos = SlidingToggle.GetLeftPos(this.m_content);
-                    targetPos = SlidingToggle.GetRightPos(this.m_content);
+                    startPos = SlidingToggle.GetLeftPos(this.m_slideContent);
+                    targetPos = SlidingToggle.GetRightPos(this.m_slideContent);
                 }
                 else
                 {
-                    startPos = SlidingToggle.GetRightPos(this.m_content);
-                    targetPos = SlidingToggle.GetLeftPos(this.m_content);
+                    startPos = SlidingToggle.GetRightPos(this.m_slideContent);
+                    targetPos = SlidingToggle.GetLeftPos(this.m_slideContent);
                 }
             }
             else
             {
                 if(this.isOn)
                 {
-                    startPos = SlidingToggle.GetBottomPos(this.m_content);
-                    targetPos = SlidingToggle.GetTopPos(this.m_content);
+                    startPos = SlidingToggle.GetBottomPos(this.m_slideContent);
+                    targetPos = SlidingToggle.GetTopPos(this.m_slideContent);
                 }
                 else
                 {
-                    startPos = SlidingToggle.GetTopPos(this.m_content);
-                    targetPos = SlidingToggle.GetBottomPos(this.m_content);
+                    startPos = SlidingToggle.GetTopPos(this.m_slideContent);
+                    targetPos = SlidingToggle.GetBottomPos(this.m_slideContent);
                 }
             }
 
@@ -117,13 +116,13 @@ namespace ModIO.UI
             }
             else
             {
-                this.m_content.anchoredPosition = targetPos;
+                this.m_slideContent.anchoredPosition = targetPos;
             }
         }
 
         private System.Collections.IEnumerator AnimateScroll(Vector2 startPos, Vector2 targetPos)
         {
-            Vector2 currentPos = this.m_content.anchoredPosition;
+            Vector2 currentPos = this.m_slideContent.anchoredPosition;
 
             float elapsed = 0f;
             float distance = Vector2.Distance(startPos, targetPos);
@@ -132,13 +131,13 @@ namespace ModIO.UI
             while(elapsed < factoredDuration)
             {
                 currentPos = Vector2.LerpUnclamped(startPos, targetPos, elapsed / factoredDuration);
-                this.m_content.anchoredPosition = currentPos;
+                this.m_slideContent.anchoredPosition = currentPos;
                 elapsed += Time.unscaledDeltaTime;
 
                 yield return null;
             }
 
-            this.m_content.anchoredPosition = targetPos;
+            this.m_slideContent.anchoredPosition = targetPos;
 
             // delay enabling buttons
             yield return new WaitForSecondsRealtime(m_reactivateDelay);
@@ -224,7 +223,6 @@ namespace ModIO.UI
                 base.OnPointerClick(eventData);
             }
         }
-
 
         #if UNITY_EDITOR
         protected override void OnValidate()
