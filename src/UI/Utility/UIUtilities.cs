@@ -257,5 +257,77 @@ namespace ModIO.UI
                 }
             }
         }
+
+
+        /// <summary>Sorts the given list by "nextness" from the origin behaviour in the given direction.</summary>
+        /// <remarks>Modified from the [UnityEngine.UI.Selectable](https://bitbucket.org/Unity-Technologies/ui/src/2019.1/UnityEngine.UI/UI/Core/Selectable.cs)
+        /// class.</remarks>
+        public static IList<T> OrderByNext<T>(T origin, List<T> behaviourList, Vector3 dir)
+        where T : UnityEngine.EventSystems.UIBehaviour
+        {
+            // asserts
+            Debug.Assert(origin != null);
+            Debug.Assert(behaviourList != null);
+
+            behaviourList.Remove(origin);
+            if(behaviourList.Count == 0) { return new List<T>(0); }
+
+            // setup
+            dir = dir.normalized;
+
+            Vector3 pos = Vector3.zero;
+            SortedList<float,T> sortedList = new SortedList<float,T>();
+
+            // Set pos to edge of rect
+            RectTransform rectTransform = origin.transform as RectTransform;
+            if(rectTransform != null)
+            {
+                Vector2 localDir = Quaternion.Inverse(origin.transform.rotation) * dir;
+
+                if (localDir != Vector2.zero)
+                {
+                    localDir /= Mathf.Max(Mathf.Abs(localDir.x), Mathf.Abs(localDir.y));
+                }
+
+                pos = rectTransform.rect.center + Vector2.Scale(rectTransform.rect.size, localDir * 0.5f);
+            }
+            pos = origin.transform.TransformPoint(pos);
+
+            // create list
+            foreach(T item in behaviourList)
+            {
+                var itemRect = item.transform as RectTransform;
+                Vector3 itemCenter = itemRect != null ? (Vector3)itemRect.rect.center : Vector3.zero;
+                Vector3 myVector = item.transform.TransformPoint(itemCenter) - pos;
+
+                // Value that is the distance out along the direction.
+                float dot = Vector3.Dot(dir, myVector);
+
+                // Skip elements that are in the wrong direction or which have zero distance.
+                // This also ensures that the scoring formula below will not have a division by zero error.
+                if (dot <= 0)
+                    continue;
+
+                // This scoring function has two priorities:
+                // - Score higher for positions that are closer.
+                // - Score higher for positions that are located in the right direction.
+                // This scoring function combines both of these criteria.
+                // It can be seen as this:
+                //   Dot (dir, myVector.normalized) / myVector.magnitude
+                // The first part equals 1 if the direction of myVector is the same as dir, and 0 if it's orthogonal.
+                // The second part scores lower the greater the distance is by dividing by the distance.
+                // The formula below is equivalent but more optimized.
+                //
+                // If a given score is chosen, the positions that evaluate to that score will form a circle
+                // that touches pos and whose center is located along dir. A way to visualize the resulting functionality is this:
+                // From the position pos, blow up a circular balloon so it grows in the direction of dir.
+                // The first Selectable whose center the circular balloon touches is the one that's chosen.
+                float score = dot / myVector.sqrMagnitude;
+
+                sortedList.Add(score, item);
+            }
+
+            return sortedList.Values;
+        }
     }
 }
