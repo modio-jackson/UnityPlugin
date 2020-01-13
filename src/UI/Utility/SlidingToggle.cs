@@ -11,8 +11,10 @@ namespace ModIO.UI
     {
         public enum SlideAxis
         {
-            Horizontal,
-            Vertical,
+            LeftOnRightOff,
+            TopOnBottomOff,
+            RightOnLeftOff,
+            BottomOnTopOff,
         }
 
         // ---------[ FIELDS ]---------
@@ -24,7 +26,7 @@ namespace ModIO.UI
         [SerializeField] private RectTransform m_slideContent = null;
         [Tooltip("When enabled, the isOn value is not toggled via a click/submit action.")]
         [SerializeField] private bool m_disableAutoToggle = false;
-        [SerializeField] private SlideAxis m_slideAxis = SlideAxis.Horizontal;
+        [SerializeField] private SlideAxis m_slideAxis = SlideAxis.LeftOnRightOff;
         [SerializeField] private float m_slideDuration = 0.15f;
         [Tooltip("Duration for which clicks are ignored after animating is completed. A negative value will allow clicking during the slide animation.")]
         [SerializeField] private float m_reactivateDelay = 0f;
@@ -83,7 +85,7 @@ namespace ModIO.UI
 
             Vector2 startPos;
             Vector2 targetPos;
-            if(m_slideAxis == SlideAxis.Horizontal)
+            if(m_slideAxis == SlideAxis.LeftOnRightOff)
             {
                 if(this.isOn)
                 {
