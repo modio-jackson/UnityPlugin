@@ -11,10 +11,10 @@ namespace ModIO.UI
     {
         public enum SlideAxis
         {
-            LeftOnRightOff,
-            TopOnBottomOff,
-            RightOnLeftOff,
-            BottomOnTopOff,
+            LeftOffRightOn,
+            TopOffBottomOn,
+            RightOffLeftOn,
+            BottomOffTopOn,
         }
 
         // ---------[ FIELDS ]---------
@@ -26,7 +26,7 @@ namespace ModIO.UI
         [SerializeField] private RectTransform m_slideContent = null;
         [Tooltip("When enabled, the isOn value is not toggled via a click/submit action.")]
         [SerializeField] private bool m_disableAutoToggle = false;
-        [SerializeField] private SlideAxis m_slideAxis = SlideAxis.LeftOnRightOff;
+        [SerializeField] private SlideAxis m_slideAxis = SlideAxis.LeftOffRightOn;
         [SerializeField] private float m_slideDuration = 0.15f;
         [Tooltip("Duration for which clicks are ignored after animating is completed. A negative value will allow clicking during the slide animation.")]
         [SerializeField] private float m_reactivateDelay = 0f;
@@ -83,36 +83,42 @@ namespace ModIO.UI
         {
             if(this.m_slideContent == null) { return; }
 
+            // - Collect Positions -
             Vector2 startPos;
             Vector2 targetPos;
-            if(m_slideAxis == SlideAxis.LeftOnRightOff)
+
+            // Left to Right
+            if((this.m_slideAxis == SlideAxis.LeftOffRightOn && this.isOn)
+               || (this.slideAxis == SlideAxis.RightOffLeftOn && !this.isOn))
             {
-                if(this.isOn)
-                {
-                    startPos = SlidingToggle.GetLeftPos(this.m_slideContent);
-                    targetPos = SlidingToggle.GetRightPos(this.m_slideContent);
-                }
-                else
-                {
-                    startPos = SlidingToggle.GetRightPos(this.m_slideContent);
-                    targetPos = SlidingToggle.GetLeftPos(this.m_slideContent);
-                }
+                startPos = SlidingToggle.GetLeftPos(this.m_slideContent);
+                targetPos = SlidingToggle.GetRightPos(this.m_slideContent);
             }
+            // Right to Left
+            else if((this.m_slideAxis == SlideAxis.RightOffLeftOn && this.isOn)
+                    || (this.slideAxis == SlideAxis.LeftOffRightOn && !this.isOn))
+            {
+                startPos = SlidingToggle.GetRightPos(this.m_slideContent);
+                targetPos = SlidingToggle.GetLeftPos(this.m_slideContent);
+            }
+            // Top to Bottom
+            else if((this.m_slideAxis == SlideAxis.TopOffBottomOn && this.isOn)
+                    || (this.slideAxis == SlideAxis.BottomOffTopOn && !this.isOn))
+            {
+                startPos = SlidingToggle.GetTopPos(this.m_slideContent);
+                targetPos = SlidingToggle.GetBottomPos(this.m_slideContent);
+            }
+            // Bottom to Top
             else
             {
-                if(this.isOn)
-                {
-                    startPos = SlidingToggle.GetBottomPos(this.m_slideContent);
-                    targetPos = SlidingToggle.GetTopPos(this.m_slideContent);
-                }
-                else
-                {
-                    startPos = SlidingToggle.GetTopPos(this.m_slideContent);
-                    targetPos = SlidingToggle.GetBottomPos(this.m_slideContent);
-                }
+                Debug.Assert((this.m_slideAxis == SlideAxis.BottomOffTopOn && this.isOn)
+                             || (this.slideAxis == SlideAxis.TopOffBottomOn && !this.isOn));
+
+                startPos = SlidingToggle.GetBottomPos(this.m_slideContent);
+                targetPos = SlidingToggle.GetTopPos(this.m_slideContent);
             }
 
-
+            // - Start Transition -
             animate &= (this.isActiveAndEnabled && m_slideDuration > 0f);
             if(animate)
             {
