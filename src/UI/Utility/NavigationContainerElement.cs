@@ -20,9 +20,6 @@ namespace ModIO.UI
         };
 
         // ---------[ Fields ]---------
-        /// <summary>Selection priority for receiving selection when parent would be selected.</summary>
-        public int priority = 0;
-
         /// <summary>Selectable component.</summary>
         private Selectable m_selectable = null;
 

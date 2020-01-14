@@ -10,6 +10,9 @@ namespace ModIO.UI
     public class NavigationContainer : Selectable
     {
         // ---------[ Fields ]---------
+        /// <summary>Prioritized list to pass of elements to pass selection to.</summary>
+        public Selectable[] selectionPriority = new Selectable[0];
+
         /// <summary>Children assigned to this container.</summary>
         [System.NonSerialized]
         public List<NavigationContainerElement> children = new List<NavigationContainerElement>();
@@ -51,18 +54,29 @@ namespace ModIO.UI
         /// <summary>Gets the highest selection priority child element.</summary>
         public NavigationContainerElement GetHighestPriorityChildElement()
         {
-            NavigationContainerElement selectionElement = null;
-
-            foreach(var childElement in this.children)
+            // check priority list
+            for(int i = 0; i < this.selectionPriority.Length; ++i)
             {
-                if(selectionElement == null
-                   || childElement.priority < selectionElement.priority)
+                Selectable childElement = this.selectionPriority[i];
+
+                if(childElement != null
+                   && childElement.IsActive())
                 {
-                    selectionElement = childElement;
+                    return childElement.gameObject.GetComponent<NavigationContainerElement>();
                 }
             }
 
-            return selectionElement;
+            // check remaining children
+            foreach(NavigationContainerElement childElement in this.children)
+            {
+                if(childElement != null
+                   && childElement.IsActive())
+                {
+                    return childElement;
+                }
+            }
+
+            return null;
         }
 
         /// <summary>Executes a delayed reselection action.</summary>
