@@ -134,69 +134,6 @@ namespace ModIO.UI
             return sceneComponents;
         }
 
-        // ---------[ OBSOLETE ]---------
-        /// <summary>[Obsolete] Finds the first instance of a component in the active scene.</summary>
-        [Obsolete("Use UIUtilities.FindComponentInAllScenes() instead.")]
-        public static T FindComponentInScene<T>(bool includeInactive)
-        where T : class
-        {
-            /*
-             * JC (2019-09-07): UIs are sometimes managed in their own scenes
-             * (e.g. one scene per UI panel/screen), and those scenes will usually
-             * not be the active scenes. For the purpose of resolving a singleton
-             * instance, Resources.FindObjectsOfTypeAll<T>() is probably the safer
-             * approach (Object.FindObjectOfType(type) would be more efficient but
-             * cannot return inactive objects.
-             */
-            var activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
-            IEnumerable<GameObject> rootObjects = activeScene.GetRootGameObjects();
-            T foundComponent = null;
-
-            foreach(var root in rootObjects)
-            {
-                if(includeInactive
-                   || root.activeInHierarchy)
-                {
-                    foundComponent = root.GetComponent<T>();
-                    if(foundComponent != null)
-                    {
-                        return foundComponent;
-                    }
-
-                    foundComponent = root.GetComponentInChildren<T>(includeInactive);
-                    if(foundComponent != null)
-                    {
-                        return foundComponent;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>[Obsolete] Finds components within the active scene.</summary>
-        [Obsolete("Use UIUtilities.FindComponentsInLoadedScenes() instead.")]
-        public static List<T> FindComponentsInScene<T>(bool includeInactive)
-        where T : class
-        {
-            // JC (2019-09-07): See comment above (FindComponentInScene).
-            var activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
-            IEnumerable<GameObject> rootObjects = activeScene.GetRootGameObjects();
-            List<T> retVal = new List<T>();
-
-            foreach(var root in rootObjects)
-            {
-                if(includeInactive
-                   || root.activeInHierarchy)
-                {
-                    retVal.AddRange(root.GetComponents<T>());
-                    retVal.AddRange(root.GetComponentsInChildren<T>(includeInactive));
-                }
-            }
-
-            return retVal;
-        }
-
         /// <summary>Creates/Destroys a number of GameObject instances as necessary.</summary>
         public static void SetInstanceCount<T>(Transform container, T template,
                                                string instanceName, int instanceCount,
@@ -328,6 +265,69 @@ namespace ModIO.UI
             }
 
             return sortedList.Values;
+        }
+
+        // ---------[ OBSOLETE ]---------
+        /// <summary>[Obsolete] Finds the first instance of a component in the active scene.</summary>
+        [Obsolete("Use UIUtilities.FindComponentInAllScenes() instead.")]
+        public static T FindComponentInScene<T>(bool includeInactive)
+        where T : class
+        {
+            /*
+             * JC (2019-09-07): UIs are sometimes managed in their own scenes
+             * (e.g. one scene per UI panel/screen), and those scenes will usually
+             * not be the active scenes. For the purpose of resolving a singleton
+             * instance, Resources.FindObjectsOfTypeAll<T>() is probably the safer
+             * approach (Object.FindObjectOfType(type) would be more efficient but
+             * cannot return inactive objects.
+             */
+            var activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            IEnumerable<GameObject> rootObjects = activeScene.GetRootGameObjects();
+            T foundComponent = null;
+
+            foreach(var root in rootObjects)
+            {
+                if(includeInactive
+                   || root.activeInHierarchy)
+                {
+                    foundComponent = root.GetComponent<T>();
+                    if(foundComponent != null)
+                    {
+                        return foundComponent;
+                    }
+
+                    foundComponent = root.GetComponentInChildren<T>(includeInactive);
+                    if(foundComponent != null)
+                    {
+                        return foundComponent;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>[Obsolete] Finds components within the active scene.</summary>
+        [Obsolete("Use UIUtilities.FindComponentsInLoadedScenes() instead.")]
+        public static List<T> FindComponentsInScene<T>(bool includeInactive)
+        where T : class
+        {
+            // JC (2019-09-07): See comment above (FindComponentInScene).
+            var activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            IEnumerable<GameObject> rootObjects = activeScene.GetRootGameObjects();
+            List<T> retVal = new List<T>();
+
+            foreach(var root in rootObjects)
+            {
+                if(includeInactive
+                   || root.activeInHierarchy)
+                {
+                    retVal.AddRange(root.GetComponents<T>());
+                    retVal.AddRange(root.GetComponentsInChildren<T>(includeInactive));
+                }
+            }
+
+            return retVal;
         }
     }
 }
