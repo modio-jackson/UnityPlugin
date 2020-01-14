@@ -204,11 +204,11 @@ namespace ModIO.UI
                 int result = x.CompareTo(y);
                 if(result == 0)
                 {
-                    return 1;
+                    return -1;
                 }
                 else
                 {
-                    return result;
+                    return -result;
                 }
             }
         }
