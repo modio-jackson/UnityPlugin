@@ -11,6 +11,7 @@ namespace ModIO.UI
     {
         // ---------[ Fields ]---------
         /// <summary>Children assigned to this parent.</summary>
+        [NonSerialized]
         public List<NavigationChild> children = new List<NavigationChild>();
 
         // ---------[ Overrides ]---------

@@ -4,11 +4,12 @@ using UnityEngine.EventSystems;
 
 namespace ModIO.UI
 {
+    /// <summary>A component that can act as a child to a NavigationParent.</summary>
     [RequireComponent(typeof(Selectable))]
     public class NavigationChild : UIBehaviour, IMoveHandler
     {
         // ---------[ Constants & Statics ]---------
-        /// <summary>None navigation to be assigned to Selectable.</summary>
+        /// <summary>None navigation to be assigned to the Selectable component.</summary>
         private static Navigation NAVIGATION_NONE = new Navigation()
         {
             mode = Navigation.Mode.None,
