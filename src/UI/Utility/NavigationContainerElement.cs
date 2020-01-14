@@ -27,7 +27,7 @@ namespace ModIO.UI
         private Selectable m_selectable = null;
 
         /// <summary>Container.</summary>
-        private NavigationContainer m_container = null;
+        private NavigationContainer m_parentContainer = null;
 
         /// <summary>Navigation data copied from selectable.</summary>
         private Navigation m_navCopy = NavigationContainerElement.NAVIGATION_NONE;
@@ -59,21 +59,33 @@ namespace ModIO.UI
             base.Awake();
 
             this.m_selectable = this.GetComponent<Selectable>();
-            this.m_container = this.GetComponentInParent<NavigationContainer>();
         }
 
         protected override void OnEnable()
         {
+            this.m_navCopy = NavigationContainerElement.NAVIGATION_NONE;
+
+            // attempt to get parent container
+            this.m_parentContainer = null;
+            if(this.transform.parent != null)
+            {
+                this.m_parentContainer = this.transform.parent.gameObject.GetComponentInParent<NavigationContainer>();
+            }
+
+            // cancel enabling if there's no container
+            if(this.m_parentContainer == null)
+            {
+                this.enabled = false;
+                return;
+            }
+
+            this.m_parentContainer.children.Add(this);
+
             // copy over and clear navigation data
             if(!this.m_selectable.navigation.Equals(NavigationContainerElement.NAVIGATION_NONE))
             {
                 this.m_navCopy = this.m_selectable.navigation;
                 this.m_selectable.navigation = NavigationContainerElement.NAVIGATION_NONE;
-            }
-
-            if(this.m_container != null)
-            {
-                this.m_container.children.Add(this);
             }
         }
 
@@ -85,9 +97,9 @@ namespace ModIO.UI
                 this.m_selectable.navigation = this.m_navCopy;
             }
 
-            if(this.m_container != null)
+            if(this.m_parentContainer != null)
             {
-                this.m_container.children.Remove(this);
+                this.m_parentContainer.children.Remove(this);
             }
         }
 
@@ -95,7 +107,7 @@ namespace ModIO.UI
         /// <summary>Process the move event.</summary>
         public void OnMove(AxisEventData eventData)
         {
-            if(this.m_container == null) { return; }
+            if(this.m_parentContainer == null) { return; }
 
             // already moved?
             if(eventData.selectedObject != this.gameObject)
@@ -104,7 +116,7 @@ namespace ModIO.UI
 
                 // check if new selection is the correct result
                 if(navSibling != null
-                   && navSibling.m_container != this.m_container)
+                   && navSibling.m_parentContainer != this.m_parentContainer)
                 {
                     return;
                 }
@@ -112,7 +124,7 @@ namespace ModIO.UI
             // eventData.selectedObject = this.gameObject;
 
             // calculate move
-            this.m_container.NavigateForChildElement(this, eventData);
+            this.m_parentContainer.NavigateForChildElement(this, eventData);
         }
     }
 }
