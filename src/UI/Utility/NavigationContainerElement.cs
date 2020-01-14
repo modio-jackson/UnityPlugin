@@ -6,6 +6,7 @@ namespace ModIO.UI
 {
     /// <summary>A component that can act as a child to a NavigationContainer.</summary>
     [RequireComponent(typeof(Selectable))]
+    [DisallowMultipleComponent]
     public class NavigationContainerElement : UIBehaviour, IMoveHandler
     {
         // ---------[ Constants & Statics ]---------
