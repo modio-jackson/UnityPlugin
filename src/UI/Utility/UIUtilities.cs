@@ -195,25 +195,41 @@ namespace ModIO.UI
             }
         }
 
+        /// <summary>Comparer for the OrderByNext function described below.</summary>
+        private class OrderByNextComparer : IComparer<float>
+        {
+            /// <summary>Comparison function allows for duplicate values in the SortedList.</summary>
+            public int Compare(float x, float y)
+            {
+                int result = x.CompareTo(y);
+                if(result == 0)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return result;
+                }
+            }
+        }
 
         /// <summary>Sorts the given list by "nextness" from the origin behaviour in the given direction.</summary>
         /// <remarks>Modified from the [UnityEngine.UI.Selectable](https://bitbucket.org/Unity-Technologies/ui/src/2019.1/UnityEngine.UI/UI/Core/Selectable.cs)
         /// class.</remarks>
-        public static IList<T> OrderByNext<T>(T origin, List<T> behaviourList, Vector3 dir)
+        public static IList<T> OrderByNext<T>(RectTransform origin, List<T> behaviourList, Vector3 dir)
         where T : UnityEngine.EventSystems.UIBehaviour
         {
             // asserts
             Debug.Assert(origin != null);
             Debug.Assert(behaviourList != null);
 
-            behaviourList.Remove(origin);
-            if(behaviourList.Count == 0) { return new List<T>(0); }
+            if(behaviourList.Count == 0 || dir == Vector3.zero) { return new List<T>(0); }
 
             // setup
             dir = dir.normalized;
 
             Vector3 pos = Vector3.zero;
-            SortedList<float,T> sortedList = new SortedList<float,T>();
+            SortedList<float,T> sortedList = new SortedList<float,T>(new OrderByNextComparer());
 
             // Set pos to edge of rect
             RectTransform rectTransform = origin.transform as RectTransform;
@@ -233,6 +249,8 @@ namespace ModIO.UI
             // create list
             foreach(T item in behaviourList)
             {
+                if(item == null || item.transform == origin) { continue; }
+
                 var itemRect = item.transform as RectTransform;
                 Vector3 itemCenter = itemRect != null ? (Vector3)itemRect.rect.center : Vector3.zero;
                 Vector3 myVector = item.transform.TransformPoint(itemCenter) - pos;
