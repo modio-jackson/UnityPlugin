@@ -14,6 +14,23 @@ namespace ModIO.UI
         [System.NonSerialized]
         public List<NavigationContainerElement> children = new List<NavigationContainerElement>();
 
+        // ---------[ Initialization ]---------
+        protected override void Awake()
+        {
+            Selectable[] childSelectables = gameObject.GetComponentsInChildren<Selectable>(true);
+
+            foreach(var selectable in childSelectables)
+            {
+                if(selectable.gameObject == this.gameObject) { continue; }
+
+                NavigationContainerElement element = selectable.gameObject.GetComponent<NavigationContainerElement>();
+                if(element == null)
+                {
+                    selectable.gameObject.AddComponent<NavigationContainerElement>();
+                }
+            }
+        }
+
         // ---------[ Overrides ]---------
         /// <summary>Overrides the OnSelect behaviour passing selection to a child.</summary>
         public override void OnSelect(BaseEventData eventData)
