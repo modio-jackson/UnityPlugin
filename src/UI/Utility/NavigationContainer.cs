@@ -103,7 +103,8 @@ namespace ModIO.UI
 
             if(childElement != null)
             {
-                newSelectionObject = childElement.gameObject
+                newSelectionObject = childElement.gameObject;
+
                 // bubble down as necessary
                 NavigationContainer childAsContainer = newSelectionObject.GetComponent<NavigationContainer>();
                 while(childAsContainer != null)
