@@ -6,8 +6,10 @@ namespace ModIO.UI
 {
     /// <summary>A component that can act as a child to a NavigationContainer.</summary>
     /// <remarks>It is important to the functionality of this component that it occurs in the Script
-    /// Execution order after both the Selectable, and NavigationContainer components. Consider this
-    /// if altering the execution order, or if encountering unexpected behaviour.</remarks>
+    /// Execution order after both the Selectable component. Consider this if altering the execution
+    /// order, or if encountering unexpected behaviour.</remarks>
+    /// <remarks>Furthermore, changes made to the sibling Selectable component's navigation data
+    /// while this component is enabled will also cause unexpected behaviour.</remarks>
     [RequireComponent(typeof(Selectable))]
     [DisallowMultipleComponent]
     public class NavigationContainerElement : UIBehaviour, IMoveHandler
@@ -38,21 +40,7 @@ namespace ModIO.UI
         private Selectable selectable { get { return this.m_selectable; } }
 
         /// <summary>Navigation data copied from selectable.</summary>
-        public Navigation navigation
-        {
-            get
-            {
-                // copy over and clear navigation data
-                if(this.IsActive()
-                   && !this.m_selectable.navigation.Equals(NavigationContainerElement.NAVIGATION_NONE))
-                {
-                    this.m_navCopy = this.m_selectable.navigation;
-                    this.m_selectable.navigation = NavigationContainerElement.NAVIGATION_NONE;
-                }
-
-                return this.m_navCopy;
-            }
-        }
+        public Navigation navigation { get { return this.m_navCopy; } }
 
         // ---------[ Initialization ]---------
         protected override void Awake()
@@ -113,20 +101,11 @@ namespace ModIO.UI
         /// <summary>Process the move event.</summary>
         public void OnMove(AxisEventData eventData)
         {
+            Debug.Assert(this.m_selectable.navigation.Equals(NavigationContainerElement.NAVIGATION_NONE),
+                         "[mod.io] The sibling Selectable component's navigation data has been"
+                         + " altered during runtime. This will cause undesirable behaviour.");
+
             if(this.m_parentContainer == null) { return; }
-
-            // already moved?
-            if(eventData.selectedObject != this.gameObject)
-            {
-                NavigationContainerElement navSibling = eventData.selectedObject.GetComponent<NavigationContainerElement>();
-
-                // check if new selection is the correct result
-                if(navSibling != null
-                   && navSibling.m_parentContainer != this.m_parentContainer)
-                {
-                    return;
-                }
-            }
 
             // calculate move
             this.m_parentContainer.NavigateForChildElement(this, eventData);
