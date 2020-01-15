@@ -22560,6 +22560,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26db96cd44bed1841abf0ceca472fad2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  offWhenDisabled: 1
+  offWhenDeselected: 1
+  offWhenMouseExits: 1
 --- !u!114 &114889590680341406
 MonoBehaviour:
   m_ObjectHideFlags: 1
