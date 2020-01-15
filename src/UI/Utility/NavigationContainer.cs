@@ -84,25 +84,42 @@ namespace ModIO.UI
         {
             Debug.Assert(childElement != null);
 
-            GameObject newSelectionObject = childElement.gameObject;
+            yield return null;
 
-            // bubble down as necessary
-            NavigationContainer childAsContainer = newSelectionObject.GetComponent<NavigationContainer>();
-            while(childAsContainer != null)
+            // in case things have changed
+            if(this == null
+               || !Application.isPlaying
+               || EventSystem.current.currentSelectedGameObject != this.gameObject)
             {
-                childElement = childAsContainer.GetHighestPriorityChildElement();
-                if(childElement != null)
-                {
-                    newSelectionObject = childElement.gameObject;
-                    childAsContainer = newSelectionObject.GetComponent<NavigationContainer>();
-                }
-                else
-                {
-                    childAsContainer = null;
-                }
+                yield break;
             }
 
-            yield return null;
+            GameObject newSelectionObject = this.gameObject;
+
+            if(childElement == null)
+            {
+                childElement = this.GetHighestPriorityChildElement();
+            }
+
+            if(childElement != null)
+            {
+                newSelectionObject = childElement.gameObject
+                // bubble down as necessary
+                NavigationContainer childAsContainer = newSelectionObject.GetComponent<NavigationContainer>();
+                while(childAsContainer != null)
+                {
+                    childElement = childAsContainer.GetHighestPriorityChildElement();
+                    if(childElement != null)
+                    {
+                        newSelectionObject = childElement.gameObject;
+                        childAsContainer = newSelectionObject.GetComponent<NavigationContainer>();
+                    }
+                    else
+                    {
+                        childAsContainer = null;
+                    }
+                }
+            }
 
             EventSystem.current.SetSelectedGameObject(newSelectionObject);
         }
