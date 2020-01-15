@@ -43,7 +43,8 @@ namespace ModIO.UI
                 Selectable childElement = this.selectionPriority[i];
 
                 if(childElement != null
-                   && childElement.IsActive())
+                   && childElement.IsActive()
+                   && childElement.navigation.mode != Navigation.Mode.None)
                 {
                     return childElement.gameObject.GetComponent<NavigationContainerElement>();
                 }
@@ -53,7 +54,8 @@ namespace ModIO.UI
             foreach(NavigationContainerElement childElement in this.children)
             {
                 if(childElement != null
-                   && childElement.IsActive())
+                   && childElement.IsActive()
+                   && childElement.navigation.mode != Navigation.Mode.None)
                 {
                     return childElement;
                 }
