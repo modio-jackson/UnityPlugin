@@ -88,8 +88,15 @@ namespace ModIO.UI
                 this.m_parentContainer.children.Remove(this);
             }
 
+            if(EventSystem.current != null
+               && EventSystem.current.currentSelectedGameObject == this.gameObject)
+            {
+                EventSystem.current.SetSelectedGameObject(this.m_parentContainer.gameObject);
+            }
+
             // restore navigation data
-            if(this.m_selectable.navigation.Equals(NavigationContainerElement.NAVIGATION_NONE))
+            if(this.m_selectable != null
+               && this.m_selectable.navigation.Equals(NavigationContainerElement.NAVIGATION_NONE))
             {
                 this.m_selectable.navigation = this.m_navCopy;
             }
