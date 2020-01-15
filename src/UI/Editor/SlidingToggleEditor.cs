@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 using UnityEditor;
 using UnityEditor.UI;
 
@@ -77,3 +79,5 @@ namespace ModIO.UI.EditorCode
         }
     }
 }
+
+#endif // UNITY_EDITOR
