@@ -147,8 +147,6 @@ namespace ModIO.UI
             // if no next child
             if(newSelection == null)
             {
-                eventData.selectedObject = null;
-
                 NavigationContainerElement thisAsChild = this.gameObject.GetComponent<NavigationContainerElement>();
 
                 if(thisAsChild != null
@@ -159,11 +157,6 @@ namespace ModIO.UI
                 else
                 {
                     base.OnMove(eventData);
-                }
-
-                if(eventData.selectedObject == null)
-                {
-                    eventData.selectedObject = childElement.gameObject;
                 }
             }
             else
