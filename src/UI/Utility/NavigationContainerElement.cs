@@ -5,6 +5,9 @@ using UnityEngine.EventSystems;
 namespace ModIO.UI
 {
     /// <summary>A component that can act as a child to a NavigationContainer.</summary>
+    /// <remarks>It is important to the functionality of this component that it occurs in the Script
+    /// Execution order after both the Selectable, and NavigationContainer components. Consider this
+    /// if altering the execution order, or if encountering unexpected behaviour.</remarks>
     [RequireComponent(typeof(Selectable))]
     [DisallowMultipleComponent]
     public class NavigationContainerElement : UIBehaviour, IMoveHandler
@@ -77,6 +80,9 @@ namespace ModIO.UI
                 return;
             }
 
+            // good to go
+            base.OnEnable();
+
             this.m_parentContainer.children.Add(this);
 
             // copy over and clear navigation data
@@ -89,16 +95,18 @@ namespace ModIO.UI
 
         protected override void OnDisable()
         {
+            if(this.m_parentContainer != null)
+            {
+                this.m_parentContainer.children.Remove(this);
+            }
+
             // restore navigation data
             if(this.m_selectable.navigation.Equals(NavigationContainerElement.NAVIGATION_NONE))
             {
                 this.m_selectable.navigation = this.m_navCopy;
             }
 
-            if(this.m_parentContainer != null)
-            {
-                this.m_parentContainer.children.Remove(this);
-            }
+            base.OnDisable();
         }
 
         // ---------[ IMoveHandler Interface ]---------
@@ -119,7 +127,6 @@ namespace ModIO.UI
                     return;
                 }
             }
-            // eventData.selectedObject = this.gameObject;
 
             // calculate move
             this.m_parentContainer.NavigateForChildElement(this, eventData);
