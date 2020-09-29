@@ -5,7 +5,7 @@
     {
         // ---------[ User Data Storage ]---------
         /// <summary>Creates and initializes a user data storage instance.</summary>
-        protected internal override void CreateUserDataStore(System.Action<IUserDataIO> onComplete)
+        protected override void CreateUserDataStore(System.Action<IUserDataIO> onComplete)
         {
             UserDataIO ioModule = new UserDataIO();
             ioModule.SetActiveUser(this.identifier, (id, success) =>
@@ -24,13 +24,13 @@
 
         // ---------[ External Authentication ]---------
         /// <summary>URL for the external authentication endpoint.</summary>
-        protected internal override string ExternalAuthenticationEndpoint
+        protected override string ExternalAuthenticationEndpoint
         {
             get { return null; }
         }
 
         /// <summary>Generates the headers for an external authentication request.</summary>
-        protected internal override System.Collections.Generic.Dictionary<string, string> GenerateAuthenticationHeaders()
+        protected override System.Collections.Generic.Dictionary<string, string> GenerateAuthenticationHeaders()
         {
             return null;
         }
