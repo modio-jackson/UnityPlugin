@@ -255,22 +255,25 @@ namespace ModIO
             Debug.Assert(!string.IsNullOrEmpty(source));
             Debug.Assert(!string.IsNullOrEmpty(destination));
 
-            try
+            if(SystemIOWrapper.DeleteDirectory(destination))
             {
-                Directory.Move(source, destination);
+                try
+                {
+                    Directory.Move(source, destination);
 
-                return true;
+                    return true;
+                }
+                catch(Exception e)
+                {
+                    string warningInfo = ("[mod.io] Failed to move directory."
+                                          + "\nSource Directory: " + source
+                                          + "\nDestination: " + destination
+                                          + "\n\n" + Utility.GenerateExceptionDebugString(e));
+                    Debug.LogWarning(warningInfo + Utility.GenerateExceptionDebugString(e));
+                }
             }
-            catch(Exception e)
-            {
-                string warningInfo = ("[mod.io] Failed to move directory."
-                                      + "\nSource Directory: " + source
-                                      + "\nDestination: " + destination
-                                      + "\n\n" + Utility.GenerateExceptionDebugString(e));
-                Debug.LogWarning(warningInfo + Utility.GenerateExceptionDebugString(e));
 
-                return false;
-            }
+            return false;
         }
 
         /// <summary>Checks for the existence of a directory.</summary>
